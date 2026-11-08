@@ -519,79 +519,31 @@ export default function App() {
         </div>
       )}
 
-      {/* Top Application Bar - Formal, Corporate, 3-Zone Contract */}
-      <header className="border-b border-slate-800 bg-[#0c1017]/95 backdrop-blur-md sticky top-0 z-40 px-4 sm:px-6 py-2.5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      {/* Top Application Bar - Clean Corporate Identity */}
+      <header className="border-b border-slate-800 bg-[#0c1017] sticky top-0 z-40 px-4 sm:px-6 py-3">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           
-          {/* Brand Identity: Professional corporate mark */}
+          {/* Brand Identity */}
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-lg border border-slate-700 bg-black overflow-hidden flex items-center justify-center flex-shrink-0 shadow-sm">
-              <SavageEmblem size={28} />
+            <div className="w-8 h-8 rounded-lg border border-slate-700 bg-black overflow-hidden flex items-center justify-center flex-shrink-0 shadow-sm">
+              <SavageEmblem size={26} />
             </div>
             <div className="min-w-0">
               <span className="text-sm sm:text-base font-bold text-white tracking-tight truncate block">
                 Savage Bar Method
               </span>
-              <span className="text-[11px] font-medium text-slate-400 truncate block">
+              <span className="text-[11px] text-slate-400 truncate block">
                 Suite Profesional de Entrenamiento & Carruseles 9:16
               </span>
             </div>
           </div>
 
-          {/* Executive Quick Actions */}
+          {/* Active Routine Indicator (Uncluttered) */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Rutinas Guardadas (Historial) */}
-            <button
-              onClick={() => setActiveTab('saved')}
-              title="Ver el historial de hasta 5 rutinas guardadas"
-              className={`px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-2 transition-colors ${
-                activeTab === 'saved'
-                  ? 'bg-slate-800 text-white border-slate-600'
-                  : 'bg-slate-900 hover:bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
-              }`}
-            >
-              <History className="w-3.5 h-3.5 text-orange-400" />
-              <span className="hidden sm:inline">Historial Guardado</span>
-              <span className="sm:hidden">Historial</span>
-              <span className="px-1.5 py-0.5 rounded bg-slate-800 text-orange-400 font-mono text-[10px] font-bold">
-                {savedRoutines.length}/5
-              </span>
-            </button>
-
-            {/* Direct 9:16 PNG Export */}
-            <button
-              onClick={handleDownloadPoster}
-              disabled={isExporting}
-              title="Descargar póster Full HD en formato 9:16 (1080x1920)"
-              className="px-3.5 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-500 text-white font-semibold text-xs transition-colors shadow-sm disabled:opacity-50 flex items-center gap-1.5"
-            >
-              <Download className={`w-3.5 h-3.5 ${isExporting ? 'animate-bounce' : ''}`} />
-              <span>{isExporting ? 'Exportando...' : 'Descargar 9:16'}</span>
-            </button>
-
-            {/* Carrusel .ZIP Button */}
-            <button
-              onClick={() => {
-                setCarouselInitialMode('download');
-                setShowCarouselModal(true);
-              }}
-              title="Descargar las 10 diapositivas del carrusel en un archivo .ZIP listo para publicar"
-              className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white font-medium text-xs transition-colors flex items-center gap-1.5"
-            >
-              <Layers className="w-3.5 h-3.5 text-slate-400" />
-              <span className="hidden sm:inline">Carrusel .ZIP</span>
-              <span className="sm:hidden">.ZIP</span>
-            </button>
-
-            {/* Caption Button */}
-            <button
-              onClick={() => setShowDescriptionModal(true)}
-              title="Ver texto redactado para publicación"
-              className="p-2 sm:px-2.5 sm:py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-medium text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors"
-            >
-              <FileText className="w-3.5 h-3.5 text-slate-400" />
-              <span className="hidden md:inline">Texto</span>
-            </button>
+            <span className="text-xs text-slate-400 hidden sm:inline">Rutina activa:</span>
+            <span className="px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-xs font-medium text-orange-400 truncate max-w-[200px] sm:max-w-xs">
+              {currentRoutine.title}
+            </span>
           </div>
         </div>
       </header>
@@ -601,12 +553,6 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         savedCount={savedRoutines.length}
-        onQuickDownloadPoster={handleDownloadPoster}
-        onQuickDownloadZip={() => {
-          setCarouselInitialMode('download');
-          setShowCarouselModal(true);
-        }}
-        isExporting={isExporting}
       />
 
       {/* Main Workspace Container */}
@@ -615,78 +561,92 @@ export default function App() {
         {/* TAB 1: LIENZO PÓSTER 9:16 */}
         {activeTab === 'poster' && (
           <div className="space-y-4 animate-fadeIn">
-            {/* Formal Toolbar for Poster Canvas */}
-            <div className="max-w-lg mx-auto space-y-2">
-              <div className="flex flex-wrap items-center justify-between gap-2 bg-[#121622] border border-slate-800 rounded-xl p-2.5 shadow-sm">
-                {/* Safe Zone Segmented Control */}
-                <div className="flex items-center bg-slate-950 p-1 rounded-lg border border-slate-800">
-                  <button
-                    onClick={() => setSafeZoneMode('tiktok')}
-                    className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                      safeZoneMode === 'tiktok'
-                        ? 'bg-slate-800 text-white font-semibold'
-                        : 'text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    Margen Seguro (17%)
-                  </button>
+            {/* Toolbar strictly for the Poster Screen */}
+            <div className="max-w-2xl mx-auto space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2.5 bg-[#121622] border border-slate-800 rounded-xl p-3 shadow-sm">
+                
+                {/* View Options (Left) */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* Safe Zone Switcher */}
+                  <div className="flex items-center bg-slate-950 p-1 rounded-lg border border-slate-800">
+                    <button
+                      onClick={() => setSafeZoneMode('tiktok')}
+                      className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                        safeZoneMode === 'tiktok'
+                          ? 'bg-slate-800 text-white font-semibold'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      Margen TikTok (17%)
+                    </button>
 
+                    <button
+                      onClick={() => setSafeZoneMode('full')}
+                      className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                        safeZoneMode === 'full'
+                          ? 'bg-slate-800 text-white font-semibold'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      Lienzo 9:16
+                    </button>
+                  </div>
+
+                  {/* TikTok Simulator Toggle */}
                   <button
-                    onClick={() => setSafeZoneMode('full')}
-                    className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                      safeZoneMode === 'full'
-                        ? 'bg-slate-800 text-white font-semibold'
-                        : 'text-slate-400 hover:text-slate-200'
+                    onClick={() => setShowTikTokOverlay(!showTikTokOverlay)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors border ${
+                      showTikTokOverlay
+                        ? 'bg-slate-800 border-slate-600 text-orange-400'
+                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    Lienzo 9:16 Total
+                    {showTikTokOverlay ? (
+                      <>
+                        <Eye className="w-3.5 h-3.5 text-orange-400" />
+                        <span>Ocultar Guía</span>
+                      </>
+                    ) : (
+                      <>
+                        <EyeOff className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Simular TikTok</span>
+                      </>
+                    )}
                   </button>
                 </div>
 
-                {/* TikTok UI Simulator Toggle */}
-                <button
-                  onClick={() => setShowTikTokOverlay(!showTikTokOverlay)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors border ${
-                    showTikTokOverlay
-                      ? 'bg-slate-800 border-slate-600 text-orange-400'
-                      : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  {showTikTokOverlay ? (
-                    <>
-                      <Eye className="w-3.5 h-3.5 text-orange-400" />
-                      <span>Ocultar Guía TikTok</span>
-                    </>
-                  ) : (
-                    <>
-                      <EyeOff className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Simular Guía TikTok</span>
-                    </>
-                  )}
-                </button>
+                {/* Actions for Poster (Right) */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowDescriptionModal(true)}
+                    title="Copiar texto para la publicación"
+                    className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-medium text-slate-200 hover:text-white flex items-center gap-1.5 transition-colors"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Texto</span>
+                  </button>
+
+                  <button
+                    onClick={handleDownloadPoster}
+                    disabled={isExporting}
+                    title="Descargar este póster vertical en Full HD 1080x1920"
+                    className="px-3.5 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-500 text-white font-semibold text-xs transition-colors shadow-sm disabled:opacity-50 flex items-center gap-1.5"
+                  >
+                    <Download className={`w-3.5 h-3.5 ${isExporting ? 'animate-bounce' : ''}`} />
+                    <span>{isExporting ? 'Exportando...' : 'Descargar Póster 9:16'}</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Status and Direct Links */}
-              <div className="flex items-center justify-between text-xs text-slate-400 px-1 pt-0.5">
-                <span className="flex items-center gap-1.5 text-slate-400 font-medium text-[11px]">
+              {/* Status Note */}
+              <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+                <span className="flex items-center gap-1.5 text-slate-400 text-[11px]">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
-                  Calibrado para TikTok, Instagram Reels & YouTube Shorts
+                  Resolución Full HD (1080×1920) calibrada para Reels, Shorts y TikTok
                 </span>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setActiveTab('saved')}
-                    className="text-slate-400 hover:text-orange-400 transition-colors font-medium text-[11px] flex items-center gap-1"
-                  >
-                    <History className="w-3 h-3" />
-                    <span>Guardadas ({savedRoutines.length}/5)</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('generator')}
-                    className="text-orange-400 hover:text-orange-300 font-medium text-[11px]"
-                  >
-                    + Nueva Rutina
-                  </button>
-                </div>
+                <span className="text-[11px] text-slate-500 font-mono">
+                  {currentRoutine.exercises.length} estaciones
+                </span>
               </div>
             </div>
 
@@ -718,27 +678,15 @@ export default function App() {
                 setCurrentRoutine((prev) => ({ ...prev, theme: t }));
               }}
               focus={focus}
-              setFocus={(f) => {
-                setFocus(f);
-              }}
+              setFocus={setFocus}
               customPrompt={customPrompt}
               setCustomPrompt={setCustomPrompt}
               isGenerating={isGenerating}
               onGenerate={handleGenerateRoutine}
-              onDownloadPoster={handleDownloadPoster}
-              onOpenDescriptionModal={() => setShowDescriptionModal(true)}
               onResetCompleted={handleResetCompleted}
-              onOpenCarouselModal={(mode = 'preview') => {
-                setCarouselInitialMode(mode);
-                setShowCarouselModal(true);
-              }}
-              layoutMode={layoutMode}
-              setLayoutMode={setLayoutMode}
               completedCount={completedCount}
               totalCount={currentRoutine.exercises.length}
               onLoadPreset={handleLoadPreset}
-              showTikTokOverlay={showTikTokOverlay}
-              setShowTikTokOverlay={setShowTikTokOverlay}
             />
           </div>
         )}

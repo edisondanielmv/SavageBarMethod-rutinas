@@ -9,11 +9,7 @@ import {
   Timer, 
   Play, 
   Pause,
-  Sliders,
-  Eye,
   Target,
-  FileText,
-  FileArchive,
   ChevronDown,
 } from 'lucide-react';
 import { UnifiedCharacterBadge } from './UnifiedCharacterBadge';
@@ -29,17 +25,17 @@ interface RoutineGeneratorControlsProps {
   setCustomPrompt: (prompt: string) => void;
   isGenerating: boolean;
   onGenerate: () => void;
-  onDownloadPoster: () => void;
-  onOpenDescriptionModal: () => void;
+  onDownloadPoster?: () => void;
+  onOpenDescriptionModal?: () => void;
   onResetCompleted: () => void;
   onOpenCarouselModal?: (mode?: 'preview' | 'download') => void;
-  layoutMode: 'grid' | 'list';
-  setLayoutMode: (mode: 'grid' | 'list') => void;
+  layoutMode?: 'grid' | 'list';
+  setLayoutMode?: (mode: 'grid' | 'list') => void;
   completedCount: number;
   totalCount: number;
   onLoadPreset: (presetId: string) => void;
-  showTikTokOverlay: boolean;
-  setShowTikTokOverlay: (show: boolean) => void;
+  showTikTokOverlay?: boolean;
+  setShowTikTokOverlay?: (show: boolean) => void;
 }
 
 export const RoutineGeneratorControls: React.FC<RoutineGeneratorControlsProps> = ({
@@ -53,14 +49,11 @@ export const RoutineGeneratorControls: React.FC<RoutineGeneratorControlsProps> =
   setCustomPrompt,
   isGenerating,
   onGenerate,
-  onOpenDescriptionModal,
   onResetCompleted,
-  onOpenCarouselModal,
   completedCount,
   totalCount,
   onLoadPreset,
 }) => {
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(90);
   const [timerRunning, setTimerRunning] = useState(false);
   const [timerLeft, setTimerLeft] = useState(90);
@@ -119,147 +112,157 @@ export const RoutineGeneratorControls: React.FC<RoutineGeneratorControlsProps> =
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-4 font-sans text-slate-100">
+    <div className="w-full max-w-4xl mx-auto space-y-5 font-sans text-slate-100">
       
-      {/* Primary Card */}
-      <div className="bg-[#10141f] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm space-y-5">
+      {/* 1. Header Information Dossier */}
+      <UnifiedCharacterBadge />
+
+      {/* 2. Main Generation Workspace */}
+      <div className="bg-[#10141f] border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-6">
         
-        {/* Row 1: Unified Character Specification */}
-        <UnifiedCharacterBadge />
-
-        {/* Row 2: Parameters Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start bg-[#141926] p-4 rounded-xl border border-slate-800">
-          
-          {/* Routine Focus Category Dropdown */}
-          <div className="md:col-span-8 space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
-              <span className="flex items-center gap-1.5">
-                <Target className="w-4 h-4 text-orange-500" />
-                <span>Grupo Muscular o Especialidad</span>
-              </span>
-              <span className="text-[11px] text-slate-500 font-mono">9 categorías disponibles</span>
-            </label>
-            
-            <div className="relative">
-              <select
-                value={focus}
-                onChange={(e) => setFocus(e.target.value as RoutineFocus)}
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 hover:border-slate-600 focus:border-orange-500 rounded-lg text-xs sm:text-sm font-medium text-white focus:outline-none cursor-pointer appearance-none pr-9 transition-colors"
-              >
-                {FOCUS_OPTIONS.map((opt) => (
-                  <option key={opt.id} value={opt.id} className="bg-slate-900 text-white py-1">
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
-            </div>
-            
-            <p className="text-xs text-slate-400 pt-0.5 leading-relaxed">
-              {FOCUS_OPTIONS.find((o) => o.id === focus)?.desc}
-            </p>
-          </div>
-
-          {/* Matrix & Station count */}
-          <div className="md:col-span-4 space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
-              <span className="flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-emerald-400" />
-                <span>Estaciones de Ejercicio</span>
-              </span>
-              <span className="text-[11px] text-emerald-400 font-mono font-medium">9:16 Calibrado</span>
-            </label>
-
-            {/* Segment Selector */}
-            <div className="grid grid-cols-3 gap-1.5">
-              {[6, 7, 8].map((num) => (
-                <button
-                  key={num}
-                  onClick={() => setExerciseCount(num)}
-                  className={`py-2 px-1 rounded-lg text-xs font-medium border transition-colors text-center ${
-                    exerciseCount === num
-                      ? 'bg-slate-800 border-slate-600 text-white font-semibold'
-                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  {num === 8 ? '8 (Estándar)' : `${num} Est.`}
-                </button>
-              ))}
-            </div>
-
-            <div className="p-2 rounded-lg bg-slate-950/60 border border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
-              <span>Estructura: 2 col × 4 filas</span>
-              <span className="text-emerald-400 font-medium">100% visible</span>
-            </div>
-          </div>
+        <div className="border-b border-slate-800 pb-3">
+          <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+            Parámetros de la Nueva Rutina
+          </h2>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Configura el enfoque muscular, las estaciones y la paleta antes de generar con el motor de IA
+          </p>
         </div>
 
-        {/* Row 3: Action Buttons Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-1">
-          {/* Main Primary Action */}
+        {/* Form Inputs Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+          
+          {/* Columna Izquierda: Categoría & Estaciones */}
+          <div className="md:col-span-7 space-y-4">
+            {/* Category Dropdown */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Target className="w-4 h-4 text-orange-500" />
+                  <span>Grupo Muscular o Especialidad</span>
+                </span>
+                <span className="text-[11px] text-slate-500 font-mono">9 disponibles</span>
+              </label>
+              
+              <div className="relative">
+                <select
+                  value={focus}
+                  onChange={(e) => setFocus(e.target.value as RoutineFocus)}
+                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 hover:border-slate-600 focus:border-orange-500 rounded-lg text-xs sm:text-sm font-medium text-white focus:outline-none cursor-pointer appearance-none pr-9 transition-colors"
+                >
+                  {FOCUS_OPTIONS.map((opt) => (
+                    <option key={opt.id} value={opt.id} className="bg-slate-900 text-white py-1">
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+              </div>
+              
+              <p className="text-xs text-slate-400 leading-relaxed pt-0.5">
+                {FOCUS_OPTIONS.find((o) => o.id === focus)?.desc}
+              </p>
+            </div>
+
+            {/* Custom AI Instruction */}
+            <div className="space-y-1.5 pt-1">
+              <label className="text-xs font-semibold text-slate-300">
+                Instrucciones Adicionales para la IA (Opcional)
+              </label>
+              <input
+                type="text"
+                value={customPrompt}
+                onChange={(e) => setCustomPrompt(e.target.value)}
+                placeholder="Ej: Enfatizar dominadas explosivas y pausas de 3 segundos..."
+                className="w-full px-3.5 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-orange-500 transition-colors"
+              />
+            </div>
+          </div>
+
+          {/* Columna Derecha: Estaciones & Paleta */}
+          <div className="md:col-span-5 space-y-4">
+            {/* Stations Count */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Layers className="w-4 h-4 text-emerald-400" />
+                  <span>Número de Estaciones</span>
+                </span>
+                <span className="text-[11px] text-emerald-400 font-mono">Formato 9:16</span>
+              </label>
+
+              <div className="grid grid-cols-3 gap-2">
+                {[6, 7, 8].map((num) => (
+                  <button
+                    key={num}
+                    onClick={() => setExerciseCount(num)}
+                    className={`py-2 px-1 rounded-lg text-xs font-medium border transition-colors text-center ${
+                      exerciseCount === num
+                        ? 'bg-slate-800 border-slate-600 text-white font-semibold'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {num === 8 ? '8 (Estándar)' : `${num} Est.`}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[11px] text-slate-500">
+                8 estaciones es el estándar óptimo para llenar perfectamente la cuadrícula vertical de 2×4.
+              </p>
+            </div>
+
+            {/* Color Palette */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                <Palette className="w-3.5 h-3.5 text-orange-400" />
+                <span>Paleta de Acento del Póster</span>
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {(['orange', 'green', 'cyan', 'gold'] as HudTheme[]).map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setTheme(t)}
+                    className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                      theme === t
+                        ? 'border-slate-600 bg-slate-800 text-white font-semibold'
+                        : 'border-slate-800 bg-slate-950 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <span className={`w-2 h-2 rounded-full ${themeConfig[t].class}`} />
+                    <span className="text-[11px] truncate">{themeConfig[t].name.split(' ')[0]}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Primary Action Button - Strictly for GENERATION */}
+        <div className="pt-2">
           <button
             onClick={onGenerate}
             disabled={isGenerating}
-            className="flex-1 py-2.5 px-4 rounded-lg bg-orange-600 hover:bg-orange-500 text-white font-semibold text-xs sm:text-sm transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-semibold text-sm transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <Sparkles className={`w-4 h-4 ${isGenerating ? 'animate-spin' : ''}`} />
-            <span>{isGenerating ? 'Generando rutina paso a paso...' : 'Generar Rutina con IA'}</span>
+            <span>
+              {isGenerating 
+                ? 'Generando las 8 estaciones con IA (paso a paso)...' 
+                : 'Generar Rutina con IA y Cargar en Lienzo'}
+            </span>
           </button>
-
-          {/* Secondary Actions Group */}
-          <div className="flex items-center gap-2">
-            {onOpenCarouselModal && (
-              <button
-                onClick={() => onOpenCarouselModal('preview')}
-                title="Previsualizar las diapositivas ampliadas del carrusel"
-                className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
-              >
-                <Eye className="w-3.5 h-3.5 text-orange-400" />
-                <span>Previsualizar Carrusel</span>
-              </button>
-            )}
-
-            {onOpenCarouselModal && (
-              <button
-                onClick={() => onOpenCarouselModal('download')}
-                title="Descargar las 10 diapositivas en archivo comprimido .ZIP"
-                className="px-3 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
-              >
-                <FileArchive className="w-3.5 h-3.5 text-slate-400" />
-                <span className="hidden sm:inline">Descargar .ZIP</span>
-                <span className="sm:hidden">.ZIP</span>
-              </button>
-            )}
-
-            <button
-              onClick={onOpenDescriptionModal}
-              title="Copiar texto redactado para publicación en redes"
-              className="px-3 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
-            >
-              <FileText className="w-3.5 h-3.5 text-slate-400" />
-              <span>Texto</span>
-            </button>
-
-            <button
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              title="Ajustes avanzados de tema e instrucciones"
-              className={`p-2.5 rounded-lg border text-xs font-medium transition-colors ${
-                showAdvanced 
-                  ? 'bg-slate-800 border-slate-600 text-orange-400' 
-                  : 'bg-slate-900 hover:bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
-              }`}
-            >
-              <Sliders className="w-4 h-4" />
-            </button>
-          </div>
+          <p className="text-center text-[11px] text-slate-500 mt-2">
+            Al terminar la generación, serás llevado automáticamente al Lienzo Póster para ver y descargar tu diseño.
+          </p>
         </div>
 
-        {/* Row 4: Official Presets Grid */}
-        <div className="space-y-2 pt-2 border-t border-slate-800/80">
+        {/* Official Presets */}
+        <div className="space-y-2 pt-4 border-t border-slate-800">
           <div className="flex items-center justify-between text-xs text-slate-400">
             <span className="font-semibold text-slate-300 flex items-center gap-1.5">
               <Flame className="w-3.5 h-3.5 text-orange-500" />
-              <span>Plantillas Oficiales Predefinidas</span>
+              <span>Cargar Plantilla Oficial Predefinida</span>
             </span>
             {completedCount > 0 && (
               <button
@@ -267,7 +270,7 @@ export const RoutineGeneratorControls: React.FC<RoutineGeneratorControlsProps> =
                 className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-rose-400 transition-colors"
               >
                 <RotateCcw className="w-3 h-3" />
-                Reiniciar progreso ({completedCount}/{totalCount})
+                Reiniciar marcas ({completedCount}/{totalCount})
               </button>
             )}
           </div>
@@ -275,7 +278,7 @@ export const RoutineGeneratorControls: React.FC<RoutineGeneratorControlsProps> =
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             <button
               onClick={() => onLoadPreset('savage-weighted-mass-8')}
-              className="p-3 rounded-xl bg-slate-950/80 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition-colors group"
+              className="p-3 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition-colors group"
             >
               <div className="text-xs font-semibold text-slate-200 group-hover:text-white truncate">
                 100% Con Lastre
@@ -285,7 +288,7 @@ export const RoutineGeneratorControls: React.FC<RoutineGeneratorControlsProps> =
 
             <button
               onClick={() => onLoadPreset('savage-tomato-8')}
-              className="p-3 rounded-xl bg-slate-950/80 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition-colors group"
+              className="p-3 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition-colors group"
             >
               <div className="text-xs font-semibold text-slate-200 group-hover:text-white truncate">
                 Savage Tomato
@@ -295,7 +298,7 @@ export const RoutineGeneratorControls: React.FC<RoutineGeneratorControlsProps> =
 
             <button
               onClick={() => onLoadPreset('power-routine-8-cyan')}
-              className="p-3 rounded-xl bg-slate-950/80 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition-colors group"
+              className="p-3 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition-colors group"
             >
               <div className="text-xs font-semibold text-slate-200 group-hover:text-white truncate">
                 Potencia Beast 8
@@ -305,7 +308,7 @@ export const RoutineGeneratorControls: React.FC<RoutineGeneratorControlsProps> =
 
             <button
               onClick={() => onLoadPreset('static-skills-elite')}
-              className="p-3 rounded-xl bg-slate-950/80 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition-colors group"
+              className="p-3 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition-colors group"
             >
               <div className="text-xs font-semibold text-slate-200 group-hover:text-white truncate">
                 Élite Estáticos
@@ -315,7 +318,7 @@ export const RoutineGeneratorControls: React.FC<RoutineGeneratorControlsProps> =
           </div>
         </div>
 
-        {/* Row 5: Rest Timer HUD Bar */}
+        {/* Rest Timer Widget */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#141926] p-3 rounded-xl border border-slate-800">
           <div className="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-start">
             <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-300">
@@ -353,51 +356,6 @@ export const RoutineGeneratorControls: React.FC<RoutineGeneratorControlsProps> =
         </div>
 
       </div>
-
-      {/* Advanced Customization Drawer */}
-      {showAdvanced && (
-        <div className="bg-[#10141f] border border-slate-800 rounded-xl p-4 space-y-3 animate-fadeIn">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Visual Palette */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                <Palette className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Paleta de Acento del Póster</span>
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {(['orange', 'green', 'cyan', 'gold'] as HudTheme[]).map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setTheme(t)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-colors ${
-                      theme === t
-                        ? 'border-slate-600 bg-slate-800 text-white font-semibold'
-                        : 'border-slate-800 bg-slate-950 text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    <span className={`w-2.5 h-2.5 rounded-full ${themeConfig[t].class}`} />
-                    <span className="text-[11px] truncate">{themeConfig[t].name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Custom AI Prompt Box */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">
-                Instrucciones Adicionales para la IA (Opcional)
-              </label>
-              <input
-                type="text"
-                value={customPrompt}
-                onChange={(e) => setCustomPrompt(e.target.value)}
-                placeholder="Ejemplo: Priorizar dominadas con pausa isométrica de 3s..."
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-orange-500"
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -4,9 +4,7 @@ import {
   Sparkles, 
   Layers, 
   History, 
-  BookOpen, 
-  Download,
-  FileArchive
+  BookOpen 
 } from 'lucide-react';
 
 export type AppTab = 'poster' | 'generator' | 'carousel' | 'saved' | 'guide';
@@ -15,18 +13,12 @@ interface NavigationMenuProps {
   activeTab: AppTab;
   setActiveTab: (tab: AppTab) => void;
   savedCount: number;
-  onQuickDownloadPoster: () => void;
-  onQuickDownloadZip: () => void;
-  isExporting: boolean;
 }
 
 export const NavigationMenu: React.FC<NavigationMenuProps> = ({
   activeTab,
   setActiveTab,
   savedCount,
-  onQuickDownloadPoster,
-  onQuickDownloadZip,
-  isExporting,
 }) => {
   const navItems: { id: AppTab; label: string; shortLabel: string; icon: React.ReactNode; badge?: string | number }[] = [
     {
@@ -57,7 +49,7 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({
     },
     {
       id: 'guide',
-      label: 'Guía de Progresión',
+      label: 'Guía & Protocolo',
       shortLabel: 'Guía',
       icon: <BookOpen className="w-4 h-4" />,
     },
@@ -65,19 +57,19 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({
 
   return (
     <>
-      {/* Desktop & Tablet Navigation Bar - Formal, clean workspace tab bar */}
-      <nav className="w-full bg-[#0c1017] border-b border-slate-800/90 backdrop-blur-md sticky top-[53px] z-30 px-3 sm:px-6">
+      {/* Desktop & Tablet Navigation Bar - Pure Navigation, Zero Clutter */}
+      <nav className="w-full bg-[#0c1017] border-b border-slate-800 backdrop-blur-md sticky top-[53px] z-30 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 py-2 overflow-x-auto no-scrollbar">
           
           {/* Menu Tabs */}
-          <div className="flex items-center gap-1.5 flex-nowrap">
+          <div className="flex items-center gap-1.5 flex-nowrap w-full">
             {navItems.map((item) => {
               const isActive = activeTab === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`px-3.5 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all whitespace-nowrap relative ${
+                  className={`px-3.5 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-colors whitespace-nowrap relative ${
                     isActive
                       ? 'bg-slate-800 text-white font-semibold shadow-sm border border-slate-700'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
@@ -101,28 +93,6 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({
                 </button>
               );
             })}
-          </div>
-
-          {/* Quick Right Actions (Desktop) */}
-          <div className="hidden lg:flex items-center gap-2">
-            <button
-              onClick={onQuickDownloadZip}
-              title="Descargar las 10 diapositivas del carrusel en archivo .ZIP"
-              className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-300 hover:text-white font-medium text-xs flex items-center gap-1.5 transition-colors"
-            >
-              <FileArchive className="w-3.5 h-3.5 text-orange-400" />
-              <span>Carrusel .ZIP</span>
-            </button>
-
-            <button
-              onClick={onQuickDownloadPoster}
-              disabled={isExporting}
-              title="Descargar póster 9:16 en Full HD (1080x1920)"
-              className="px-3 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-500 text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-sm disabled:opacity-50"
-            >
-              <Download className={`w-3.5 h-3.5 ${isExporting ? 'animate-bounce' : ''}`} />
-              <span>{isExporting ? 'Exportando...' : 'Descargar Póster 9:16'}</span>
-            </button>
           </div>
         </div>
       </nav>

@@ -1,0 +1,8 @@
+{
+  "name": "Savage Bar Method - Calisthenics AI Routine Generator",
+  "description": "Elite Savage Bar Method advanced calisthenics routine generator with tactical 9:16 HUD posters, muscular masked athlete visual consistency, and AI progression protocols.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

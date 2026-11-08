@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // 1. Intercept Vite HMR WebSocket creation so it never closes or throws unhandledrejection
+      (function() {
+        if (typeof window === 'undefined') return;
+        var OrigWS = window.WebSocket;
+        if (!OrigWS) return;
+
+        function FakeHmrSocket(url, protocols) {
+          this.url = typeof url === 'string' ? url : 'ws://localhost:3000/';
+          this.protocols = protocols;
+          this.readyState = 1; // WebSocket.OPEN
+          this.OPEN = 1;
+          this.CONNECTING = 0;
+          this.CLOSING = 2;
+          this.CLOSED = 3;
+          this.binaryType = 'blob';
+          this.bufferedAmount = 0;
+          this.extensions = '';
+          this._listeners = {};
+        }
+
+        FakeHmrSocket.prototype.addEventListener = function(type, listener) {
+          if (!this._listeners[type]) this._listeners[type] = [];
+          this._listeners[type].push(listener);
+          if (type === 'open') {
+            var self = this;
+            setTimeout(function() {
+              try { listener.call(self, new Event('open')); } catch (e) {}
+            }, 0);
+          }
+        };
+
+        FakeHmrSocket.prototype.removeEventListener = function(type, listener) {
+          if (this._listeners[type]) {
+            this._listeners[type] = this._listeners[type].filter(function(l) { return l !== listener; });
+          }
+        };
+
+        FakeHmrSocket.prototype.dispatchEvent = function(event) {
+          var list = this._listeners[event.type];
+          if (list) {
+            for (var i = 0; i < list.length; i++) {
+              try { list[i].call(this, event); } catch (e) {}
+            }
+          }
+          return true;
+        };
+
+        FakeHmrSocket.prototype.send = function() {};
+        FakeHmrSocket.prototype.close = function() {
+          this.readyState = 3;
+        };
+
+        window.WebSocket = function(url, protocols) {
+          var isHmr = protocols === 'vite-hmr' || (typeof url === 'string' && (url.includes('token=') || url.includes('vite-hmr')));
+          if (isHmr) {
+            return new FakeHmrSocket(url, protocols);
+          }
+          return new OrigWS(url, protocols);
+        };
+
+        window.WebSocket.prototype = OrigWS.prototype;
+        window.WebSocket.OPEN = 1;
+        window.WebSocket.CONNECTING = 0;
+        window.WebSocket.CLOSING = 2;
+        window.WebSocket.CLOSED = 3;
+      })();
+
+      // 2. Safety net for unhandledrejection
+      window.addEventListener('unhandledrejection', function(event) {
+        var reason = event.reason;
+        if (
+          reason &&
+          ((typeof reason.message === 'string' &&
+            (reason.message.includes('WebSocket') ||
+             reason.message.includes('closed without opened') ||
+             reason.message.includes('failed to connect') ||
+             reason.message.includes('Failed to fetch dynamically imported module'))) ||
+           (typeof reason.stack === 'string' && reason.stack.includes('@vite/client')))
+        ) {
+          event.preventDefault();
+        }
+      });
+      window.addEventListener('error', function(event) {
+        var msg = typeof event.message === 'string' ? event.message : '';
+        if (
+          (event.filename && event.filename.includes('@vite/client')) ||
+          msg.includes('WebSocket') ||
+          msg.includes('Unexpected end of script') ||
+          msg.includes('Failed to fetch dynamically imported module')
+        ) {
+          event.preventDefault();
+          // If a truncated script chunk error occurred, auto-recover once cleanly
+          if (msg.includes('Unexpected end of script') || msg.includes('Failed to fetch dynamically imported module')) {
+            var rKey = '__savage_auto_recover_ts__';
+            var last = parseInt(sessionStorage.getItem(rKey) || '0', 10);
+            if (Date.now() - last > 4000) {
+              sessionStorage.setItem(rKey, String(Date.now()));
+              setTimeout(function() { window.location.reload(); }, 100);
+            }
+          }
+        }
+      });
+    </script>
+    <title>Savage Bar Method - Calisthenics AI Routine Generator</title>
+    <meta name="description" content="Elite Savage Bar Method advanced calisthenics routine generator with tactical 9:16 HUD posters, muscular masked athlete visual consistency, and AI progression protocols." />
+    <meta property="og:title" content="Savage Bar Method - Calisthenics AI Routine Generator" />
+    <meta property="og:description" content="Elite Savage Bar Method advanced calisthenics routine generator with tactical 9:16 HUD posters, muscular masked athlete visual consistency, and AI progression protocols." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,700&family=Orbitron:wght@700;900&family=Teko:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-zinc-950 text-zinc-100 antialiased selection:bg-orange-500 selection:text-black">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

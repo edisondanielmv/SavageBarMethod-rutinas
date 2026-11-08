@@ -109,14 +109,6 @@ export const SavedRoutinesHistory: React.FC<SavedRoutinesHistoryProps> = ({
                 )}
               </>
             )}
-
-            <button
-              onClick={onGoToGenerator}
-              className="px-3.5 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 text-white font-medium text-xs flex items-center gap-1.5 transition-colors shadow-sm"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Nueva Rutina</span>
-            </button>
           </div>
         </div>
 

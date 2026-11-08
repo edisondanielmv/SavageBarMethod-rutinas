@@ -1,13 +1,11 @@
 import React from 'react';
 import { 
-  Smartphone, 
   Sparkles, 
-  Layers, 
-  History, 
-  BookOpen 
+  Smartphone, 
+  History 
 } from 'lucide-react';
 
-export type AppTab = 'poster' | 'generator' | 'carousel' | 'saved' | 'guide';
+export type AppTab = 'generator' | 'poster' | 'saved';
 
 interface NavigationMenuProps {
   activeTab: AppTab;
@@ -22,54 +20,39 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({
 }) => {
   const navItems: { id: AppTab; label: string; shortLabel: string; icon: React.ReactNode; badge?: string | number }[] = [
     {
+      id: 'generator',
+      label: '1. Generar Rutina',
+      shortLabel: 'Generar',
+      icon: <Sparkles className="w-4 h-4" />,
+    },
+    {
       id: 'poster',
-      label: 'Lienzo Póster (9:16)',
+      label: '2. Póster & Carrusel',
       shortLabel: 'Póster',
       icon: <Smartphone className="w-4 h-4" />,
     },
     {
-      id: 'generator',
-      label: 'Generador de Rutinas',
-      shortLabel: 'Generador',
-      icon: <Sparkles className="w-4 h-4" />,
-    },
-    {
-      id: 'carousel',
-      label: 'Estudio de Carrusel',
-      shortLabel: 'Carrusel',
-      icon: <Layers className="w-4 h-4" />,
-      badge: '10 fotos',
-    },
-    {
       id: 'saved',
-      label: 'Historial Guardado',
-      shortLabel: 'Historial',
+      label: '3. Rutinas Guardadas',
+      shortLabel: 'Guardadas',
       icon: <History className="w-4 h-4" />,
       badge: `${savedCount}/5`,
-    },
-    {
-      id: 'guide',
-      label: 'Guía & Protocolo',
-      shortLabel: 'Guía',
-      icon: <BookOpen className="w-4 h-4" />,
     },
   ];
 
   return (
     <>
-      {/* Desktop & Tablet Navigation Bar - Pure Navigation, Zero Clutter */}
+      {/* Desktop & Tablet Navigation Bar - Exactly 3 Clean Tabs */}
       <nav className="w-full bg-[#0c1017] border-b border-slate-800 backdrop-blur-md sticky top-[53px] z-30 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 py-2 overflow-x-auto no-scrollbar">
-          
-          {/* Menu Tabs */}
-          <div className="flex items-center gap-1.5 flex-nowrap w-full">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 py-2.5">
+          <div className="flex items-center gap-2 flex-nowrap w-full sm:w-auto">
             {navItems.map((item) => {
               const isActive = activeTab === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`px-3.5 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-colors whitespace-nowrap relative ${
+                  className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-medium flex items-center justify-center gap-2 transition-colors whitespace-nowrap relative ${
                     isActive
                       ? 'bg-slate-800 text-white font-semibold shadow-sm border border-slate-700'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
@@ -97,9 +80,9 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({
         </div>
       </nav>
 
-      {/* Mobile Fixed Bottom Navigation Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0c1017]/95 border-t border-slate-800 backdrop-blur-lg px-2 py-1.5">
-        <div className="grid grid-cols-5 gap-1">
+      {/* Mobile Fixed Bottom Navigation Bar - Exactly 3 Clean Tabs */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0c1017]/95 border-t border-slate-800 backdrop-blur-lg px-3 py-2">
+        <div className="grid grid-cols-3 gap-2">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -109,7 +92,7 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({
                   setActiveTab(item.id);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className={`flex flex-col items-center justify-center py-1.5 px-0.5 rounded-lg transition-colors relative ${
+                className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-colors relative ${
                   isActive
                     ? 'text-orange-400 font-semibold bg-slate-800/80'
                     : 'text-slate-400 hover:text-slate-200'
@@ -120,12 +103,12 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({
                     {item.icon}
                   </span>
                   {item.badge && (
-                    <span className="absolute -top-1 -right-2.5 text-[8px] font-mono bg-orange-600 text-white px-1 py-0.2 rounded-full">
+                    <span className="absolute -top-1 -right-3 text-[8px] font-mono bg-orange-600 text-white px-1 py-0.2 rounded-full">
                       {item.badge}
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] tracking-tight mt-1 truncate max-w-full">
+                <span className="text-[11px] tracking-tight mt-1 truncate">
                   {item.shortLabel}
                 </span>
               </button>
